@@ -151,6 +151,17 @@ fly deploy --strategy immediate
 ```
 Then manually remove the old nodes in tailscale and enable exit node in tailscale.
 
+#### Deploy config changes only
+If you only need to deploy configuration changes (like updating `fly.toml` or environment variables) without rebuilding the image, you can use the existing image from the latest release:
+
+```
+fly deploy -i $(fly releases --json | jq -j '.[0].ImageRef')
+```
+
+This command:
+- Gets the latest release's image reference using `fly releases --json | jq -j '.[0].ImageRef'`
+- Deploys that existing image with the current configuration using `fly deploy -i`
+- Skips the build process entirely, making deployments much faster for config-only changes
 
 Checkout [this fork](https://github.com/StepBroBD/Tailscale-on-Fly.io/tree/stepbrobd-pr-feat-auto-deploy) for an approach to auto deploy to fly with a github action (including managing tailscale nodes with a python script).
 
